@@ -1,0 +1,13 @@
+{
+  "name": "webhook-processor",
+  "version": "1.0.0",
+  "description": "Webhook processing service with runtime bugs",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}

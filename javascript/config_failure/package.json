@@ -1,0 +1,18 @@
+{
+  "name": "db-migrate-tool",
+  "version": "1.0.0",
+  "description": "Database migration tool with configuration bugs",
+  "main": "src/migrate.js",
+  "bin": {
+    "db-migrate": "src/migrate.js"
+  },
+  "scripts": {
+    "migrate": "node src/migrate.js",
+    "migrate:up": "node src/migrate.js up",
+    "migrate:down": "node src/migrate.js down",
+    "migrate:status": "node src/migrate.js status"
+  },
+  "dependencies": {
+    "dotenv": "^16.0.0"
+  }
+}

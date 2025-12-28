@@ -1,0 +1,13 @@
+{
+  "database": {
+    "ssl": true,
+    "pool": {
+      "min": 5,
+      "max": 20
+    }
+  },
+  "logging": {
+    "level": "warn",
+    "format": "json"
+  }
+}

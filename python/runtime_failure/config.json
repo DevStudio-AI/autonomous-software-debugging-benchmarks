@@ -1,0 +1,51 @@
+{
+  "version": "1.0",
+  "tasks": [
+    {
+      "name": "backup_database",
+      "command": "echo 'Backing up database...' && sleep 0.5",
+      "dependencies": [],
+      "timeout": 30,
+      "options": {
+        "retry_count": 3
+      }
+    },
+    {
+      "name": "sync_files",
+      "command": "echo 'Syncing files...' && sleep 0.3",
+      "dependencies": ["backup_database"],
+      "timeout": 60,
+      "options": {
+        "retry_count": 2
+      }
+    },
+    {
+      "name": "send_report",
+      "command": "echo 'Sending report...' && sleep 0.2",
+      "dependencies": ["backup_database", "sync_files"],
+      "timeout": 15,
+      "options": {
+        "retry_count": 1
+      }
+    },
+    {
+      "name": "cleanup_temp",
+      "command": "echo 'Cleaning temp files...' && sleep 0.1",
+      "timeout": 10,
+      "options": {}
+    },
+    {
+      "name": "verify_integrity",
+      "command": "echo 'Verifying integrity...' && sleep 0.4",
+      "dependencies": ["sync_files"],
+      "options": {
+        "retry_count": 2
+      },
+      "enabled": true
+    }
+  ],
+  "settings": {
+    "parallel_execution": false,
+    "log_level": "INFO"
+  }
+}

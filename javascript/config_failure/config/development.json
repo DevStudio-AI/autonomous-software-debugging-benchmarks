@@ -1,0 +1,10 @@
+{
+  "database": {
+    "name": "myapp_dev",
+    "user": "dev_user",
+    "password": "dev_password"
+  },
+  "logging": {
+    "level": "debug"
+  }
+}

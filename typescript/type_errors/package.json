@@ -1,0 +1,17 @@
+{
+  "name": "api-client-library",
+  "version": "1.0.0",
+  "description": "TypeScript API client with type errors",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc --watch",
+    "demo": "ts-node src/demo.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "typescript": "^5.0.0",
+    "ts-node": "^10.9.0"
+  }
+}

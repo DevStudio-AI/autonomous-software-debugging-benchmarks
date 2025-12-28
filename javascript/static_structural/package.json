@@ -1,0 +1,10 @@
+{
+  "name": "file-format-validator",
+  "version": "1.0.0",
+  "description": "File format validation utility with import bugs",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "validate": "node src/index.js"
+  }
+}
