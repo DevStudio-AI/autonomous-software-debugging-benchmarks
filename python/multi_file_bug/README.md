@@ -65,20 +65,6 @@ Alternatively, run the included integration tests:
 python test_api.py
 ```
 
-## What Makes This Realistic
-
-- **Schema mismatch**: Frontend expects `authorName`, backend sends `author.name`
-- **Type inconsistency**: IDs are strings in some places, integers in others  
-- **Contract drift**: API documentation says one thing, implementation does another
-- **Query parameter handling**: Search params processed differently than expected
-- **Nested object serialization**: Related objects not properly included
-
-These bugs require tracing data flow across:
-- Route handlers (app.py)
-- Data models (models.py)
-- Serialization layer (schemas.py)
-- Data access layer (repository.py)
-
 ## Files
 
 - `app.py` - Flask routes and handlers

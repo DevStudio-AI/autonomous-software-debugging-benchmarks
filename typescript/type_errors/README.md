@@ -7,12 +7,7 @@ A TypeScript client library for interacting with a REST API, featuring type-safe
 
 ## The Bug
 
-The project contains bugs that cause the symptoms described below. The debugging system must identify and fix these issues.
-- Interface property mismatches
-- Generic type parameter issues
-- Union type narrowing failures
-- Incorrect optional/required modifiers
-- Missing type assertions for API responses
+The project contains TypeScript type errors that prevent compilation. The debugging system must identify and fix these issues based on the compiler errors below.
 
 ## Symptoms
 

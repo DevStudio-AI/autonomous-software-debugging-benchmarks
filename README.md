@@ -162,4 +162,4 @@ MIT - Use freely for benchmarking, teaching, or tool evaluation.
 
 ---
 
-*This suite is maintained as part of the VybeCoder project but is designed for general use in evaluating any agentic debugging system.*
+*This suite is designed for general use in evaluating any autonomous debugging system.*

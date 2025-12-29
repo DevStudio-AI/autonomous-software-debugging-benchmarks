@@ -7,21 +7,7 @@ A Go HTTP service for creating and managing shortened URLs with analytics.
 
 ## The Bug
 
-The project contains bugs that cause the symptoms described below. The debugging system must identify and fix these issues.
-
-### Nil Pointer Panics
-- **Uninitialized store**: Global `store` variable is never initialized (commented out in main)
-- **Unchecked map lookups**: `GetByShort` returns nil when URL not found, but callers don't check
-- **Nil field access**: Accessing `url.AccessCount`, `url.Original` on nil URL pointer
-- **Nil ExpiresAt**: Dereferencing `*url.ExpiresAt` without nil check
-
-### Index Out of Bounds
-- **Empty slice access**: `url.Tags[0]` without checking if Tags is empty
-- **Slice bounds**: `allURLs[0:5]` when fewer than 5 URLs exist
-- **Results array**: `results[0]` and `results[len(results)-1]` on empty input
-
-### Nil Map Access
-- **Metadata access**: `url.Metadata["featured"]` when Metadata is nil (reading nil map is safe in Go, but this pattern indicates other potential issues)
+The project contains runtime panic bugs that crash the server during normal operations. The debugging system must identify and fix these issues based on the panic stack traces below.
 
 ## Symptoms
 

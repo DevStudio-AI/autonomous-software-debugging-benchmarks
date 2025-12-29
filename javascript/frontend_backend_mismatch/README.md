@@ -73,15 +73,6 @@ npm start
 # - No console errors
 ```
 
-## What Makes This Realistic
-
-- **Field name mismatch**: Backend sends `task_id`, frontend expects `taskId`
-- **Date format drift**: Backend sends ISO, frontend expects Unix timestamp
-- **Response wrapper inconsistency**: Some endpoints wrap in `{ data: ... }`, others don't
-- **Status code handling**: Frontend doesn't handle 201 correctly
-- **Pagination contract**: Backend has offset-based, frontend expects cursor-based
-- **Auth header format**: Backend expects `Bearer token`, code sends `JWT token`
-
 ## Files
 
 ### Server (`server/`)
