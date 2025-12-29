@@ -7,26 +7,7 @@ A smart meeting scheduling service with availability detection, conflict resolut
 
 ## The Bug
 
-The project contains bugs that cause the symptoms described below. The debugging system must identify and fix these issues.
-
-### TimeSlot.java
-- **Inverted overlap logic**: `overlaps()` method returns wrong result due to incorrect boolean logic
-- **Boundary error in contains()**: End time check is exclusive when it should handle boundary correctly
-- **Off-by-one in canFit()**: Uses `>` instead of `>=`, rejecting exact-fit slots
-- **Missing validation in splitAt()**: Doesn't validate split time is within slot bounds
-
-### Meeting.java
-- **Double-counting participants**: `getTotalParticipants()` counts organizer even if they're in attendees list
-- **Case sensitivity**: `involves()` uses case-sensitive comparison for emails
-
-### SchedulerService.java
-- **Date range exclusion**: Loop uses `isBefore()` instead of `!isAfter()`, excluding end date
-- **Conflict detection inverted**: Relies on buggy `overlaps()` method
-- **Reschedule race condition**: Doesn't remove old meeting before checking new slot conflicts
-- **Room size off-by-one**: Boundary values assigned to wrong room sizes (4 people → "small" but small is "2-4")
-- **Time averaging fails at boundaries**: Averaging 23:00 and 01:00 gives noon instead of midnight
-- **Division by zero**: `calculateStats()` divides by meeting count without zero check
-- **DST not handled**: Duration calculations ignore daylight saving transitions
+The project contains logic bugs across multiple classes that cause incorrect behavior in scheduling operations. The debugging system must identify and fix these issues based on the symptoms below.
 
 ## Symptoms
 
@@ -44,7 +25,7 @@ hourSlot.canFit(Duration.ofHours(1));  // Returns false! Should be true
 findAvailableSlots(users, Jan1, Jan7, oneHour);  // Only searches Jan 1-6!
 
 // Room suggestion wrong
-suggestRoomSize(4);  // "Small Huddle Room (2-4 people)" - but 4 should get medium!
+suggestRoomSize(4);  // Returns wrong room category
 
 // Stats calculation crash
 calculateStats(user, today, today);  // ArithmeticException: / by zero

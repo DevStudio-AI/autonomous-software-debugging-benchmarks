@@ -7,12 +7,7 @@ A Node.js CLI tool for managing database migrations across different environment
 
 ## The Bug
 
-The project contains bugs that cause the symptoms described below. The debugging system must identify and fix these issues.
-- Environment variables not loaded in correct order
-- Config file path resolution broken in production
-- Default values override explicit settings
-- Boolean environment variables parsed as strings
-- Missing required env vars don't throw until runtime
+The project contains configuration and environment handling bugs that prevent the tool from working correctly across environments. The debugging system must identify and fix these issues based on the symptoms below.
 
 ## Symptoms
 
@@ -28,7 +23,7 @@ Or:
 ```bash
 $ DB_SSL=false node src/migrate.js up
 
-# Still tries to connect with SSL because 'false' is truthy string
+# SSL is still being used despite explicitly disabling it
 Error: SSL connection required but certificate not found
 ```
 

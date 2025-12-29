@@ -15,8 +15,6 @@ class NotesRepository(private val database: NotesDatabase) {
     
     private val dao = database.noteDao()
     private val repositoryScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
-    
-    // BUG: Listener pattern without proper lifecycle management
     private val listeners = mutableListOf<OnNotesChangedListener>()
     
     interface OnNotesChangedListener {
@@ -25,7 +23,6 @@ class NotesRepository(private val database: NotesDatabase) {
     
     /**
      * Add a listener for notes changes
-     * BUG: If Activity adds listener but doesn't remove in onDestroy, it leaks
      */
     fun addListener(listener: OnNotesChangedListener) {
         listeners.add(listener)
@@ -33,14 +30,12 @@ class NotesRepository(private val database: NotesDatabase) {
     
     /**
      * Remove a listener
-     * BUG: Callers often forget to call this in onDestroy
      */
     fun removeListener(listener: OnNotesChangedListener) {
         listeners.remove(listener)
     }
     
     private fun notifyListeners(notes: List<Note>) {
-        // BUG: This is called from background thread but listeners update UI
         listeners.forEach { it.onNotesChanged(notes) }
     }
     
@@ -51,7 +46,6 @@ class NotesRepository(private val database: NotesDatabase) {
     
     /**
      * Get all notes synchronously
-     * BUG: Calling this from main thread blocks UI
      */
     fun getAllNotesSync(): List<Note> = dao.getAllNotesSync()
     
@@ -75,11 +69,9 @@ class NotesRepository(private val database: NotesDatabase) {
     
     /**
      * Delete a note synchronously
-     * BUG: This blocks the calling thread - problematic on main thread
      */
     fun deleteNoteSync(noteId: Long) {
         dao.deleteByIdSync(noteId)
-        // BUG: Notifying listeners from same thread
         val allNotes = dao.getAllNotesSync()
         notifyListeners(allNotes)
     }

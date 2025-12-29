@@ -7,11 +7,7 @@ A Node.js utility for validating various file formats (JSON, CSV, XML, YAML).
 
 ## The Bug
 
-The project contains bugs that cause the symptoms described below. The debugging system must identify and fix these issues.
-- Incorrect relative import paths (`../utils` instead of `./utils`)
-- Circular dependency between `models` and `services`  
-- Missing file extension in ESM imports
-- Wrong module export style mixing (CommonJS vs ESM)
+The project contains module resolution and import/export issues that prevent it from running. The debugging system must identify and fix these issues based on the error messages produced.
 
 ## Symptoms
 

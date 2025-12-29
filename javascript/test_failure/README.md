@@ -7,12 +7,7 @@ A JavaScript module for e-commerce shopping cart functionality with pricing, dis
 
 ## The Bug
 
-The project contains bugs that cause the symptoms described below. The debugging system must identify and fix these issues.
-- Discount calculations use wrong operator precedence
-- Tax is applied before discounts (should be after)
-- Quantity updates don't recalculate totals correctly
-- Free shipping threshold comparison is inverted
-- Bulk discount tiers have off-by-one errors
+The project contains calculation bugs that cause test failures. The debugging system must identify and fix these issues based on the failing tests.
 
 ## Symptoms
 

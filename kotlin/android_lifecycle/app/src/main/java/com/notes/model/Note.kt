@@ -17,7 +17,6 @@ data class Note(
 ) {
     /**
      * Convert to Parcelable for Bundle storage
-     * BUG: This encourages storing in savedInstanceState which can cause TransactionTooLargeException
      */
     fun toParcelable(): NoteParcelable = NoteParcelable(this)
 }

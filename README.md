@@ -38,6 +38,7 @@ This repository contains **real project files with purposeful errors** designed 
 
 | Category | Language | Why |
 |----------|----------|-----|
+| Dynamic | Python | AI/ML ecosystem, debugging sweet spot |
 | Web | JavaScript / TypeScript | Frontend + backend |
 | Systems | Go | Type & compile rigor |
 | Enterprise | Java | Real-world expectations |
@@ -47,9 +48,9 @@ This repository contains **real project files with purposeful errors** designed 
 ## Repository Structure
 
 ```
-vybecoder-capability-suite/
+autonomous-software-debugging-benchmarks/
 ├── python/
-│   ├── static_structural/      # Import/export/syntax errors
+│   ├── static_structural/      # Import/syntax errors
 │   ├── runtime_failure/        # Environment, null refs, type coercion
 │   ├── test_failure/           # Failing tests revealing logic flaws
 │   ├── multi_file_bug/         # Cross-module contract violations
@@ -59,33 +60,33 @@ vybecoder-capability-suite/
 │   ├── runtime_failure/        # Async bugs, undefined access
 │   ├── test_failure/           # Jest tests revealing edge cases
 │   ├── frontend_backend_mismatch/  # API contract drift
-│   └── config_failure/         # Webpack, env, port issues
+│   └── config_failure/         # Env, port, config issues
 ├── typescript/
 │   ├── type_errors/            # Generic constraints, inference failures
 │   └── async_failures/         # Promise chains, race conditions
 ├── java/
-│   ├── dependency_issue/       # Maven/Gradle resolution
+│   ├── dependency_issue/       # Maven resolution
 │   ├── logic_error/            # Off-by-one, state bugs
 │   └── test_failure/           # JUnit revealing intent mismatch
 ├── go/
 │   ├── runtime_panic/          # Nil pointer, slice bounds
 │   └── concurrency_bug/        # Race conditions, deadlocks
-├── kotlin_android/
-│   ├── gradle_mismatch/        # Dependency version conflicts
-│   ├── lifecycle_crash/        # Fragment/Activity lifecycle misuse
-│   └── manifest_error/         # Missing permissions, components
-├── swift_ios/
+├── kotlin/
+│   └── android_lifecycle/      # Activity/Fragment lifecycle issues
+├── swift/
 │   ├── optionals_crash/        # Force unwrap failures
 │   ├── build_error/            # Missing Info.plist keys
 │   └── ui_thread/              # Main thread violations
-├── unity_csharp/
+├── unity/
 │   ├── lifecycle_bug/          # MonoBehaviour order issues
 │   ├── serialization_error/    # Missing SerializeField
 │   └── scene_mismatch/         # Asset-code desync
-└── cpp_game/
-    ├── linker_error/           # Undefined references
-    ├── memory_issue/           # Safe memory bugs
-    └── header_missing/         # Include path problems
+├── cpp/
+│   ├── linker_error/           # Undefined references
+│   ├── memory_issue/           # Safe memory bugs
+│   └── header_missing/         # Include path problems
+└── cross_domain/
+    └── unity_node_contract/    # Multi-language integration
 ```
 
 ## How to Use This Suite

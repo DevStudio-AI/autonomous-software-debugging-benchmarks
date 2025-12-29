@@ -57,7 +57,6 @@ abstract class NotesDatabase : RoomDatabase() {
         
         /**
          * Get singleton database instance
-         * BUG: This holds a Context reference which can leak if Application context isn't used
          */
         fun getInstance(context: Context): NotesDatabase {
             return INSTANCE ?: synchronized(this) {

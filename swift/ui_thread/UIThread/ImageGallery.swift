@@ -27,16 +27,12 @@ class ImageGalleryViewController: UIViewController {
         collectionView.delegate = self
     }
     
-    // MARK: - Bug: Blocking Main Thread
+    // MARK: - Synchronous Loading
     
     func loadImages() {
         loadingIndicator.startAnimating()
-        
-        // BUG: Synchronous network call on main thread - causes UI freeze
         let urls = imageService.fetchImageURLsSync()
         imageURLs = urls
-        
-        // BUG: Processing images synchronously on main thread
         for url in urls {
             if let data = try? Data(contentsOf: url),  // Blocking I/O on main thread
                let image = UIImage(data: data) {
@@ -48,7 +44,7 @@ class ImageGalleryViewController: UIViewController {
         collectionView.reloadData()
     }
     
-    // MARK: - Bug: UI Updates from Background Thread
+    // MARK: - Async Loading
     
     func loadImagesAsync() {
         loadingIndicator.startAnimating()
@@ -61,20 +57,16 @@ class ImageGalleryViewController: UIViewController {
                 if let data = try? Data(contentsOf: url),
                    let image = UIImage(data: data) {
                     self.images.append(image)
-                    
-                    // BUG: Updating UI from background thread
                     self.collectionView.reloadData()
                     self.statusLabel.text = "Loaded \(index + 1) of \(urls.count)"
                     self.progressBar.progress = Float(index + 1) / Float(urls.count)
                 }
             }
-            
-            // BUG: Stopping indicator from background thread
             self.loadingIndicator.stopAnimating()
         }
     }
     
-    // MARK: - Bug: Mixed Threading with Partial Fix
+    // MARK: - Partial Threading
     
     func loadImagesWithPartialFix() {
         DispatchQueue.global().async {
@@ -83,8 +75,6 @@ class ImageGalleryViewController: UIViewController {
             for url in urls {
                 if let data = try? Data(contentsOf: url),
                    let image = UIImage(data: data) {
-                    
-                    // BUG: Only partial dispatch - array modification still on background
                     self.images.append(image)  // Race condition - not thread safe
                     
                     DispatchQueue.main.async {
@@ -95,10 +85,9 @@ class ImageGalleryViewController: UIViewController {
         }
     }
     
-    // MARK: - Bug: Alert on Background Thread
+    // MARK: - Error Handling
     
     func showErrorAlert(_ message: String) {
-        // BUG: Presenting alert from background thread
         let alert = UIAlertController(title: "Error", message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default))
         present(alert, animated: true)  // Called from background thread
@@ -109,36 +98,30 @@ class ImageGalleryViewController: UIViewController {
             do {
                 _ = try self.imageService.fetchWithError()
             } catch {
-                // BUG: Showing alert from background thread
                 self.showErrorAlert(error.localizedDescription)
             }
         }
     }
     
-    // MARK: - Bug: Navigation from Background Thread
+    // MARK: - Navigation
     
     func navigateToDetail(for image: UIImage) {
         DispatchQueue.global().async {
             // Some background processing...
             Thread.sleep(forTimeInterval: 0.5)
-            
-            // BUG: Navigation from background thread
             let detailVC = ImageDetailViewController()
             detailVC.image = image
             self.navigationController?.pushViewController(detailVC, animated: true)
         }
     }
     
-    // MARK: - Bug: Animation on Background Thread
+    // MARK: - Animations
     
     func animateLoadingComplete() {
         DispatchQueue.global().async {
-            // BUG: UIView animation from background thread
             UIView.animate(withDuration: 0.3) {
                 self.loadingIndicator.alpha = 0
             }
-            
-            // BUG: Setting view properties from background thread
             self.statusLabel.isHidden = false
             self.progressBar.isHidden = true
         }
@@ -155,15 +138,11 @@ extension ImageGalleryViewController: UICollectionViewDataSource, UICollectionVi
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "ImageCell", for: indexPath) as! ImageCell
-        
-        // BUG: Loading image synchronously in cellForItem - causes scroll jank
         let image = images[indexPath.item]
         cell.imageView.image = applyFilterSync(to: image)  // Blocking call
         
         return cell
     }
-    
-    // BUG: Expensive synchronous operation
     func applyFilterSync(to image: UIImage) -> UIImage {
         // Simulates expensive image processing
         Thread.sleep(forTimeInterval: 0.1)  // Blocks main thread
@@ -172,14 +151,11 @@ extension ImageGalleryViewController: UICollectionViewDataSource, UICollectionVi
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         let image = images[indexPath.item]
-        
-        // BUG: Heavy processing on main thread during selection
         let processedImage = processImageSync(image)
         navigateToDetail(for: processedImage)
     }
     
     func processImageSync(_ image: UIImage) -> UIImage {
-        // BUG: Blocks main thread
         Thread.sleep(forTimeInterval: 1.0)
         return image
     }
@@ -195,8 +171,6 @@ class ImageCell: UICollectionViewCell {
 // MARK: - Image Service
 
 class ImageService {
-    
-    // BUG: Designed for main thread use but blocks
     func fetchImageURLsSync() -> [URL] {
         // Simulates slow network call
         Thread.sleep(forTimeInterval: 2.0)
@@ -211,8 +185,6 @@ class ImageService {
         Thread.sleep(forTimeInterval: 1.0)
         throw NSError(domain: "ImageService", code: 500, userInfo: [NSLocalizedDescriptionKey: "Server error"])
     }
-    
-    // BUG: Callback on wrong thread
     func fetchImageURLsAsync(completion: @escaping ([URL]) -> Void) {
         DispatchQueue.global().async {
             Thread.sleep(forTimeInterval: 1.0)
@@ -220,7 +192,6 @@ class ImageService {
                 URL(string: "https://example.com/image1.jpg")!,
                 URL(string: "https://example.com/image2.jpg")!
             ]
-            // BUG: Completion called on background thread
             completion(urls)  // Caller might update UI directly
         }
     }
@@ -240,13 +211,10 @@ class ImageDetailViewController: UIViewController {
     }
     
     @IBAction func applyFilterTapped(_ sender: Any) {
-        // BUG: Heavy processing blocks UI
         guard let image = image else { return }
         
         // Disables button but processing still blocks
         filterButton.isEnabled = false
-        
-        // BUG: Synchronous heavy processing
         let filtered = applyComplexFilter(to: image)
         
         // UI never updates until processing complete
@@ -259,15 +227,11 @@ class ImageDetailViewController: UIViewController {
         Thread.sleep(forTimeInterval: 3.0)  // Blocks main thread for 3 seconds
         return image
     }
-    
-    // BUG: Async filter with wrong thread callback
     func applyFilterAsync() {
         guard let image = image else { return }
         
         DispatchQueue.global().async {
             let filtered = self.applyComplexFilter(to: image)
-            
-            // BUG: Updating imageView from background thread
             self.imageView.image = filtered
         }
     }
@@ -289,12 +253,8 @@ class UploadManager {
                 Thread.sleep(forTimeInterval: 0.5)
                 
                 self.uploadProgress = Float(index + 1) / Float(images.count)
-                
-                // BUG: Delegate callback from background thread
                 self.delegate?.uploadProgressUpdated(self.uploadProgress)
             }
-            
-            // BUG: Completion callback from background thread
             self.delegate?.uploadCompleted()
         }
     }
@@ -312,7 +272,6 @@ class SettingsViewController: UIViewController {
     @IBOutlet var saveButton: UIButton!
     
     @IBAction func saveTapped(_ sender: Any) {
-        // BUG: Synchronous file I/O on main thread
         let settings = collectSettings()
         let data = try! JSONEncoder().encode(settings)
         let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
@@ -335,7 +294,6 @@ class SettingsViewController: UIViewController {
     }
     
     func loadSettings() {
-        // BUG: Synchronous file read on main thread
         let url = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
             .appendingPathComponent("settings.json")
         
@@ -355,17 +313,13 @@ class SettingsViewController: UIViewController {
 class DatabaseManager {
     
     static let shared = DatabaseManager()
-    
-    // BUG: Mutable state accessed from multiple threads without synchronization
     private var cache: [String: Any] = [:]
     
     func saveToCache(_ value: Any, forKey key: String) {
-        // BUG: Not thread-safe
         cache[key] = value
     }
     
     func getFromCache(forKey key: String) -> Any? {
-        // BUG: Not thread-safe
         return cache[key]
     }
     
@@ -374,18 +328,13 @@ class DatabaseManager {
             // Simulate database fetch
             Thread.sleep(forTimeInterval: 0.2)
             let data = ["id": id, "name": "Test"]
-            
-            // BUG: Modifying shared state from background thread
             self.cache[id] = data
-            
-            // BUG: Completion might be used for UI update
             completion(data)
         }
     }
     
     func clearCacheAsync() {
         DispatchQueue.global().async {
-            // BUG: Dictionary modification not thread-safe
             self.cache.removeAll()
         }
     }
@@ -403,22 +352,17 @@ class ImageSearchViewModel: ObservableObject {
     
     func search(query: String) {
         isLoading = true
-        
-        // BUG: Publisher doesn't receive on main thread
         URLSession.shared.dataTaskPublisher(for: URL(string: "https://api.example.com/search?q=\(query)")!)
             .map { $0.data }
             .decode(type: [String].self, decoder: JSONDecoder())
-            // BUG: Missing .receive(on: DispatchQueue.main)
             .sink(
                 receiveCompletion: { completion in
-                    // BUG: @Published update from background thread
                     self.isLoading = false
                     if case .failure(let error) = completion {
                         self.errorMessage = error.localizedDescription
                     }
                 },
                 receiveValue: { urls in
-                    // BUG: @Published update from background thread
                     self.searchResults = urls.compactMap { _ in UIImage() }
                 }
             )
